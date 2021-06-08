@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>movie description</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.js" integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+</head>
+<style type="text/css">
+	body{
+		background-color: #eee;
+	}
+	.bg-nav{
+		background-color: #032541;
+
+	}
+	.container{
+		max-width: 100%;
+	}
+	.jumbotron{
+		background-image:;
+		background-repeat: no-repeat;
+		background-size: cover;
+	    height:550px;
+
+	}
+	
+
+
+</style>
+<!-- https://api.themoviedb.org/3/movie/420809/videos?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US
+ -->
+
+<script type="text/javascript">
+	$(document).ready(function(){
+		var url=window.location.search;
+		var urlParams=new URLSearchParams(url);
+		var movie_id=urlParams.get('id');
+		$.ajax({
+			url:`https://api.themoviedb.org/3/movie/${movie_id}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US`,
+			type:'GET',
+			success:function(data){
+				console.log(data);
+				var backdrop_path='https://www.themoviedb.org/t/p/w600_and_h900_bestv2' +data.backdrop_path;
+				var poster_path='https://www.themoviedb.org/t/p/w600_and_h900_bestv2' + data.poster_path;
+				var movie_name=data.title;
+				var release_date=data.release_date;
+				var runtime=data.runtime;
+				var tagline=data.tagline;
+				var overview=data.overview;
+				var status=data.status;
+				var original_language=data.original_language;
+				var budget=data.budget;
+				var revenue=data.revenue;
+				$('#status').html(status);
+				$('#original_language').html(original_language);
+				$('#budget').html("$" + budget);
+				$('#revenue').html("$" + revenue);
+				
+
+
+
+				$('#poster').html(`<img src="${poster_path}" style="width:100%;height:450px; border-radius: 15px">
+				`);
+				$('.jumbotron').css('background-image',`url(${backdrop_path})`);
+				$('#release_date').html(release_date);
+				$('#runtime').html(runtime +"mins");
+				$('#tagline').html(tagline);
+				$('#overview').html(overview);
+				$('#movie_name').html(movie_name);
+				var genres='';
+				for( var i=0;i<data.genres.length;i++){
+					genres=genres + data.genres[i].name + ' ';
+				}
+				$('#genres').html(genres);
+				$.ajax({
+					url:`https://api.themoviedb.org/3/movie/${movie_id}/similar?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US`,
+					type:'GET',
+					success:function(data){
+						console.log(data);
+
+						for (var i = 0; i < 6; i++) {
+					console.log(data.results[i]);
+					var title=data.results[i].title;
+					var release_date=data.results[i].release_date; 
+					var poster_url='https://image.tmdb.org/t/p/w500/' + data.results[i].poster_path;
+					var movie_id=data.results[i].id;
+					
+					var output=`<div class="col-2">
+					            <img src="${poster_url}" style="width:100%;height:250px ;border-radius:15px;">
+	                            <a href="movie_description.html?id=${movie_id}"><p><b>${title}</b></p></a>
+					            <p class="text-muted ">${release_date}</p>
+				             </div>`
+					$('#display-movies').append(output);
+					
+
+				    }
+			    },
+
+						
+					
+					error:function(error){
+						console.log(error);
+					}
+
+				})
+				$.ajax({
+					url:`https://api.themoviedb.org/3/movie/${movie_id}/videos?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US`,
+					type:'GET',
+					success:function(data){
+						console.log(data);
+						for(var i=0;i<2;i++){
+							var video_key=data.results[i].key;
+							var p=`<iframe width="500" height="315" src="https://www.youtube.com/embed/${video_key}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`
+							$('#trailer').append(p);
+						}
+					},
+					error:function(error){
+						console.log(error);
+					}
+				})
+
+
+				
+			},
+			error:function(error){
+				console.log(error);
+			}
+
+
+		})
+
+	})
+</script>
+<body>
+	<nav class="navbar bg-nav">
+		<div class="nav" style="display: inline;">
+		<h3 class="navbar-brand text-white"><b>My Movie App</b></h3>
+
+		<a href="index.html"><h6 class="navbar-brand text-white">home</h6></a></div>
+		<!-- <p>https://api.themoviedb.org/3/movie/top_rated?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US&page=1</p> -->
+	</nav>
+
+	<div class="jumbotron mt-4">
+		<div class="row">
+			<div class="col-3" id="poster">
+				
+			</div>
+			<div class="col-9 text-white">
+				<h1><span id="movie_name"><b></b>(2020)</span></h1>
+				<p><span id="release_date"></span>
+				<span id="genres"></span>
+				<span id="runtime"></span>
+			    </p>
+				<h5 class="text-muted mt-4" id="tagline"></h5>
+				<h3 class=""><b>Overviews</b></h3>
+				<P id="overview" ></P>
+
+			</div>
+		</div>
+	</div>
+
+	<div class="movie_container">
+		<div class="row">
+			<div class="col-9">
+				<div class="row ml-2">
+					<h1 class="mb-5">Recommended Movies</h1>
+				    <div class="row " id="display-movies">
+						
+				    </div>
+				
+				</div>
+				<div><h3>Popular Videos and Trailers.</h3></div>
+				<div class="row ml-2" id="trailer">
+					
+					
+				</div>
+			</div>
+			<div class="col-3 mt-5">
+				
+					<h6>Status</h6>
+					<p id="status"></p>
+					<h6>Original Language</h6>
+					<p id="original_language"></p>
+					<h6>Budget</h6>
+					<p id="budget"></p>
+					<h6>Revenue</h6>
+					<p id="revenue"></p>
+					
+				
+				
+			</div>
+
+			
+		</div>
+		<div class="bg-nav" style="height: 150px">
+			<div class="ml-4" >
+			<a href="https://www.themoviedb.org/documentation/api"><h6 class="text-white">API</h6></a>
+		    <a href = "mailto: skajal92310@gmail.com" ><h6 class="text-white">Contact</h6></a>
+		
+		</div>
+			
+		</div>
+		
+			
+	</div>
+
+</body>
+</html>
