@@ -24,7 +24,48 @@
 		var url=window.location.search;
 		var urlParams=new URLSearchParams(url);
 		var search=urlParams.get('userInput');
-		console.log(search);
+		for(var i=0;i<search.length;i++){
+
+			  if(search.includes("<")){
+			search=search.replace("<", "");
+			
+			  }
+			  if(search.includes("=")){
+			search=search.replace("=", "");
+			 
+			  }
+			  if(search.includes(">")){
+			search=search.replace(">", "");
+			 
+			  }
+			  if(search.includes("'")){
+			search=search.replace("'", "");
+			 
+			  }
+			   if(search.includes(";")){
+			search=search.replace(";", "");
+			 
+			  }
+			   if(search.includes("?")){
+			search=search.replace("?", "");
+			  }
+			   if(search.includes("{")){
+			search=search.replace("{", "");
+			  }
+			   if(search.includes("!")){
+			search=search.replace("!", "");
+		          }
+		           if(search.includes("[")){
+			search=search.replace("[", "");
+		          }
+		           if(search.includes("/")){
+			search=search.replace("/", "");
+		          }
+
+
+
+			
+		}
 		$('#search_text').html(search);
 		$.ajax({
 				url:`https://api.themoviedb.org/3/search/movie?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US&page=1&include_adult=false&query=${search}`,
